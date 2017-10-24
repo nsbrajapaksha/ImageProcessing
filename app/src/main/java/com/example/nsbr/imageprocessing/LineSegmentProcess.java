@@ -117,8 +117,9 @@ public class LineSegmentProcess {
             @Override
             protected void onPostExecute(TreeMap<Integer, TreeMap<Integer, RectEntityData>> result) {
                 Log.d(TAG, result.toString());
+                Log.d(TAG, "finished processing");
                 //......post processing
-                Log.d(TAG, result.toString());
+
 
             }
         }.execute();
