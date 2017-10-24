@@ -40,6 +40,7 @@ public class LineSegmentProcess {
     private ArrayList<int[]> verticalLines;
     private ArrayList<int[]> horizontalLines;
     private int mAverageColor;
+    private int skewAngle;
 
 
     public ArrayList<int[]> getVerticalLines() {
@@ -116,12 +117,12 @@ public class LineSegmentProcess {
             @Override
             protected void onPostExecute(TreeMap<Integer, TreeMap<Integer, RectEntityData>> result) {
                 Log.d(TAG, result.toString());
-                //......
+                //......post processing
+                Log.d(TAG, result.toString());
 
             }
         }.execute();
     }
-
 
     private ArrayList<MatOfPoint> findContours(Mat mask) {
         Mat canny = new Mat();
