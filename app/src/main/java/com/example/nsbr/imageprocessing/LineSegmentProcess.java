@@ -1,5 +1,6 @@
 package com.example.nsbr.imageprocessing;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.os.AsyncTask;
@@ -30,18 +31,29 @@ import static org.opencv.imgproc.Imgproc.getStructuringElement;
  * Created by nipuna on 10/12/17.
  */
 
-public class LineSegmentProcess {
+public class LineSegmentProcess extends Activity {
 
     private static final String TAG = "LineSegmentProcessor";
     private static final Scalar COLOR_WHITE = new Scalar(255, 255, 255);
     private static final Scalar COLOR_BLACK = new Scalar(0, 0, 0);
 
-    private Mat mImg, mImgGray, verticalLinesMat, horizontalLinesMat;
+    private Mat mImg = null;
+    private Mat mImgGray, verticalLinesMat, horizontalLinesMat, mask;
     private ArrayList<int[]> verticalLines;
     private ArrayList<int[]> horizontalLines;
     private int mAverageColor;
     private int skewAngle;
+    private Bitmap bitmap = null;
 
+    public static void setPostProcessCallBack(PostProcessCallBack postProcessCallBack) {
+        mPostProcessCallBack = postProcessCallBack;
+    }
+
+    static public PostProcessCallBack mPostProcessCallBack;
+
+    public Bitmap getBitmap() {
+        return bitmap;
+    }
 
     public ArrayList<int[]> getVerticalLines() {
         return verticalLines;
@@ -74,7 +86,7 @@ public class LineSegmentProcess {
 
                 Imgproc.Canny(thresholdImg, imgCanny, 100, 200, 5, false);  //detect edges
                 Imgproc.blur(imgCanny, bluredCanny, new Size(3, 3));
-                Mat mask = new Mat(mImg.size(), mImg.type(), COLOR_BLACK); //to draw lines on this mask
+                mask = new Mat(mImg.size(), mImg.type(), COLOR_BLACK); //to draw lines on this mask
 
                 verticalLines = new ArrayList<int[]>();
 
@@ -108,7 +120,7 @@ public class LineSegmentProcess {
                 Imgproc.dilate(mask, mask, element);
 
                 //find contours and populate data
-                ArrayList<MatOfPoint> contours = findContours(mask);
+                ArrayList<MatOfPoint> contours = findContours();
 
                 return populateLineSegmentData(contours);
             }
@@ -116,16 +128,33 @@ public class LineSegmentProcess {
 
             @Override
             protected void onPostExecute(TreeMap<Integer, TreeMap<Integer, RectEntityData>> result) {
-                Log.d(TAG, result.toString());
                 Log.d(TAG, "finished processing");
                 //......post processing
 
+                bitmap = Bitmap.createBitmap(mImg.cols(), mImg.rows(), Bitmap.Config.ARGB_8888);
+                Utils.matToBitmap(mImg, bitmap);
+                /*for (TreeMap.Entry<Integer, TreeMap<Integer, RectEntityData>> mapY : result.entrySet()) {
+                    TreeMap<Integer, RectEntityData> map = mapY.getValue();
+
+                    for (TreeMap.Entry<Integer, RectEntityData> mapX : map.entrySet()) {
+                        RectEntityData item = mapX.getValue();
+                        if (item != null && item.getBoundingBox() != null) {
+                            Canvas canvas = new Canvas(bitmap);
+                            Paint paint = new Paint();
+                            paint.setStyle(Paint.Style.STROKE);
+                            paint.setColor(Color.RED);
+                            canvas.drawRect(item.getBoundingBox(), paint);
+                        }
+                    }
+
+                }*/
+                mPostProcessCallBack.postProcessIsFinished(true);
 
             }
         }.execute();
     }
 
-    private ArrayList<MatOfPoint> findContours(Mat mask) {
+    private ArrayList<MatOfPoint> findContours() {
         Mat canny = new Mat();
         ArrayList<MatOfPoint> contours = new ArrayList<MatOfPoint>();
         Mat hierarchy = new Mat();
@@ -141,7 +170,7 @@ public class LineSegmentProcess {
 
         for (int i = 0; i < contours.size(); i += 2) {
             org.opencv.core.Rect brect = Imgproc.boundingRect(contours.get(i));
-            if (brect.area() < 1000 || brect.width < 20 || brect.height < 20)
+            if (brect.area() < 1000 || brect.width < 10 || brect.height < 10)
                 continue;
             if (brect.area() > mImg.width() * mImg.height() / 2)
                 continue;

@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.opencv.android.BaseLoaderCallback;
@@ -17,6 +18,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "LineSegmentProcessor";
     private TextView tvTest;
+    private ImageView iv;
+    private LineSegmentProcess lineSegmentProcess;
     private BaseLoaderCallback baseLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
@@ -37,8 +40,18 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         tvTest = (TextView) findViewById(R.id.tvTest);
+        iv = (ImageView) findViewById(R.id.imageView);
+        lineSegmentProcess = new LineSegmentProcess();
+        lineSegmentProcess.setPostProcessCallBack(mPostProcessCallBack);
     }
 
+    PostProcessCallBack mPostProcessCallBack = new PostProcessCallBack() {
+
+        @Override
+        public void postProcessIsFinished(boolean successfully) {
+            iv.setImageBitmap(lineSegmentProcess.getBitmap());
+        }
+    };
 
     @Override
     protected void onPause() {
@@ -66,8 +79,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void process() {
-        Bitmap bmp = BitmapFactory.decodeResource(this.getResources(), R.drawable.img1);
-        LineSegmentProcess lineSegmentProcess = new LineSegmentProcess();
+        Bitmap bmp = BitmapFactory.decodeResource(this.getResources(), R.drawable.img3);
         try {
             lineSegmentProcess.segmentLines(bmp);
         } catch (IOException e) {
