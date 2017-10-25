@@ -3,7 +3,6 @@ package com.example.nsbr.imageprocessing;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
-import android.os.AsyncTask;
 import android.util.Log;
 
 import org.opencv.android.Utils;
@@ -65,14 +64,14 @@ public class LineSegmentProcess extends Activity {
     }
 
 
-    public void segmentLines(final Bitmap bmp) throws IOException {
-        // Switch text to processing
+    public TreeMap<Integer, TreeMap<Integer, RectEntityData>> segmentLines(final Bitmap bmp) throws IOException {
+       /* // Switch text to processing
         Log.i(TAG, "Line segmentation processing....");
 
         // line segmentation in an async task
         new AsyncTask<Object, Void, TreeMap<Integer, TreeMap<Integer, RectEntityData>>>() {
             @Override
-            protected TreeMap<Integer, TreeMap<Integer, RectEntityData>> doInBackground(Object... params) {
+            protected TreeMap<Integer, TreeMap<Integer, RectEntityData>> doInBackground(Object... params) {*/
                 mImg = new Mat();
                 mImgGray = new Mat(mImg.rows(), mImg.cols(), CvType.CV_8UC1);
                 Mat thresholdImg = new Mat();
@@ -126,14 +125,14 @@ public class LineSegmentProcess extends Activity {
             }
 
 
-            @Override
+           /* @Override
             protected void onPostExecute(TreeMap<Integer, TreeMap<Integer, RectEntityData>> result) {
                 Log.d(TAG, "finished processing");
                 //......post processing
 
                 bitmap = Bitmap.createBitmap(mImg.cols(), mImg.rows(), Bitmap.Config.ARGB_8888);
                 Utils.matToBitmap(mImg, bitmap);
-                /*for (TreeMap.Entry<Integer, TreeMap<Integer, RectEntityData>> mapY : result.entrySet()) {
+                *//*for (TreeMap.Entry<Integer, TreeMap<Integer, RectEntityData>> mapY : result.entrySet()) {
                     TreeMap<Integer, RectEntityData> map = mapY.getValue();
 
                     for (TreeMap.Entry<Integer, RectEntityData> mapX : map.entrySet()) {
@@ -147,12 +146,12 @@ public class LineSegmentProcess extends Activity {
                         }
                     }
 
-                }*/
+                }*//*
                 mPostProcessCallBack.postProcessIsFinished(true);
 
             }
         }.execute();
-    }
+    }*/
 
     private ArrayList<MatOfPoint> findContours() {
         Mat canny = new Mat();
