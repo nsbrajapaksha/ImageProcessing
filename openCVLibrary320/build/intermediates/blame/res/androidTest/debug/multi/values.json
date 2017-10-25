@@ -1,6 +1,10 @@
 [
     {
-        "outputFile": "/home/user/Documents/ImageProcessing/openCVLibrary320/build/intermediates/incremental/mergeDebugAndroidTestResources/merged.dir/values/values.xml",
+        "outputFile": "E:\\android studio project files\\ImageProcessing\\openCVLibrary320\\build\\intermediates\\incremental\\mergeDebugAndroidTestResources\\merged.dir\\values\\values.xml",
+        "map": []
+    },
+    {
+        "outputFile": "E:\\home\\user\\Documents\\ImageProcessing\\openCVLibrary320\\build\\intermediates\\incremental\\mergeDebugAndroidTestResources\\merged.dir\\values\\values.xml",
         "map": []
     }
 ]
